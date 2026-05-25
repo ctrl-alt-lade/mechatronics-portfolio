@@ -1,0 +1,44 @@
+import pandas as pd
+import numpy as np
+
+# Load the experimental dataset
+file_path = "ultrasonic_sensor_data.csv"
+df = pd.read_csv(file_path)
+
+# Extract and clean relevant static testing columns
+df_clean = df.iloc[1:26, [1, 2, 3, 4, 5, 9]].copy()
+df_clean.columns = ['True_Distance', 'd1', 'd2', 'd3', 'Average_d', 'Average_Error']
+df_clean = df_clean.apply(pd.to_numeric, errors='coerce').dropna()
+
+# 1. Range and Span Calculations
+true_min = 2.08 # Hardware limit reading
+true_max = df_clean['True_Distance'].max()
+span = true_max - true_min
+
+# 2. Nonlinearity Calculation
+df_clean['Deviation'] = (df_clean['Average_d'] - df_clean['True_Distance']).abs()
+max_deviation = df_clean['Deviation'].max()
+nonlinearity_pct = (max_deviation / span) * 100
+
+# 3. Sensitivity Calculation (Linear Region 50cm - 150cm)
+d_50 = df_clean[df_clean['True_Distance'] == 50]['Average_d'].values[0]
+d_150 = df_clean[df_clean['True_Distance'] == 150]['Average_d'].values[0]
+sensitivity = (d_150 - d_50) / (150 - 50)
+
+# 4. Accuracy and Error
+avg_error_overall = df_clean['Average_Error'].mean()
+max_error_overall = df_clean['Average_Error'].max()
+
+# 5. Repeatability Calculation (Spread variance)
+df_clean['Max_Reading'] = df_clean[['d1', 'd2', 'd3']].max(axis=1)
+df_clean['Min_Reading'] = df_clean[['d1', 'd2', 'd3']].min(axis=1)
+df_clean['Reading_Spread'] = df_clean['Max_Reading'] - df_clean['Min_Reading']
+avg_spread = df_clean['Reading_Spread'].mean()
+
+# Output Results
+print(f"Operational Span: {span} cm")
+print(f"Maximum Deviation: {max_deviation} cm")
+print(f"Nonlinearity: {nonlinearity_pct:.2f}%")
+print(f"Sensitivity (50-150cm): {sensitivity:.4f}")
+print(f"Overall Average Error: {avg_error_overall:.2f} cm")
+print(f"Average Reading Spread (Repeatability): {avg_spread:.2f} cm")

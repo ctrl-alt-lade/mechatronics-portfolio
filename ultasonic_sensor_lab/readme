@@ -1,0 +1,19 @@
+# Ultra-Sonic Sensor Lab
+
+## Overview
+This project outlines the code, data and methods that were used to test the parameters of the HC SR04 Ultra-sonic sensor.
+
+## Tech Stack & Hardware
+*   **Language:**  Python, C++
+*   **Libraries:** liquidcrystal, pandas, numpy
+*   **Hardware:** Arduino Uno, HC SR04, 1602 LCD, Breadboard, Jumper wires.
+
+## System Logic
+Briefly explain the algorithm or mechanism. How does data flow? How do the physical parts move?
+*   *Example:* "The system reads environmental data via ultrasonic sensors. If an obstacle is detected within 15cm, the C++ control loop overrides forward motion and initiates a 90-degree pivot."
+
+## Setup / How to Run (Optional)
+Provide the exact steps needed to compile or test the project.
+1. Open the `.ino` file in the Arduino IDE.
+2. Select the correct COM port and board type.
+3. Upload the script to the microcontroller.

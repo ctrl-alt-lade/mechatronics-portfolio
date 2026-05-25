@@ -1,0 +1,69 @@
+// include the library code:
+
+#include <LiquidCrystal.h>
+
+
+
+// initialize the library by associating any needed LCD interface pin
+// with the arduino pin number it is connected to
+const int rs = 11, en = 12, d4 = 2, d5 = 3, d6 = 4, d7 = 5;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+
+
+
+// Initialize the Ultrasonic Sensor
+
+const int trigPin = 6;
+const int echoPin = 7;
+
+
+
+ float getDistance() {
+ long duration;
+ float distance;
+ digitalWrite(trigPin, LOW);
+ delayMicroseconds(2);
+ digitalWrite(trigPin, HIGH);
+ delayMicroseconds(10);
+ digitalWrite(trigPin, LOW);
+ duration = pulseIn(echoPin, HIGH);
+ distance = duration * 0.0343 / 2.0;
+ return distance;
+ }
+
+
+
+void setup() {
+  // set up the LCD's number of columns and rows
+  lcd.begin(16, 2);
+  // Print a message to the LCD.
+  lcd.print("Measuring...");
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Have the Ultrasonic sensor measure distance
+  float sum = 0;
+ for (int i = 0; i < 5; i++) {
+ sum += getDistance();
+ delay(50);
+ }
+ float avgDistance = sum / 5.0;
+ Serial.print("Average Distance: ");
+ Serial.print(avgDistance);
+ Serial.println(" cm");
+ delay(500);
+  
+  // Update the LCD
+  lcd.clear();
+  lcd.setCursor(0, 0); 
+  lcd.print("Sensor Data:");
+  
+  lcd.setCursor(0, 1);
+  lcd.print(avgDistance);    // Prints the float directly!
+  lcd.print(" cm");       // Add units for the lab metrics
+  
+  delay(50); 
+}
